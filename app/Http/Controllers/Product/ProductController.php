@@ -3,39 +3,55 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Product;
+use App\Models\Variant;
+use App\Models\Attribute;
+use App\Http\Traits\ProductTrait;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Traits\UploadImageTrait;
 use App\Http\Requests\StoreProductRequest;
 
 class ProductController extends Controller
 {
 
+    use ProductTrait,UploadImageTrait;
+    public function __construct(
+        private readonly Product $product,
+        )
+    {}
+
     public function index()
     {
 
+        $products = $this->product::with(['variants.attributeValues.attribute'])
+        ->where('created_by', Auth::id()) // filter the product to show only the one who created  by the auth user
+        ->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 
     public function create()
     {
-        return view('product.create');
+        $attributes = Attribute::with('values')->get();       
+        
+        return view('products.create', compact('attributes'));
+
     }
 
     public function store(StoreProductRequest $request)
     {
-        // Handle the image upload if exists
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');  // Uploads to storage/app/public/products
-        }
+        //dd($request);
+        $imagePath = $this->handleImageUpload($request);
 
-        // Create the product
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'image' => $imagePath
-        ]);
-
-        // Return response, for example redirecting back or sending JSON response
+        $product = $this->createProduct($request, $imagePath);
+    
+        $this->syncProductAttributes($product, $request->attributes);
+    
+        $this->createProductVariants($product, $request->variants);
+    
         return redirect()->back()->with('success', 'Product created successfully.');
     }
+    
+    
     
 }
