@@ -9,6 +9,18 @@ use App\Http\Requests\StoreProductRequest;
 class ProductController extends Controller
 {
 
+<<<<<<< Updated upstream
+=======
+    use ProductTrait,UploadImageTrait;
+    
+    public function __construct(
+        private readonly Product $product,
+        private readonly Attribute $attribute,
+        private readonly Variant $variant
+        )
+    {}
+
+>>>>>>> Stashed changes
     public function index()
     {
 
@@ -16,7 +28,14 @@ class ProductController extends Controller
 
     public function create()
     {
+<<<<<<< Updated upstream
         return view('product.create');
+=======
+        $attributes = $this->attribute::with('values')->get();       
+        
+        return view('products.create', compact('attributes'));
+
+>>>>>>> Stashed changes
     }
 
     public function store(StoreProductRequest $request)
