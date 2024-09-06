@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Product;
+use App\Models\Variant;
+use App\Models\Attribute;
+use App\Http\Traits\ProductTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\Product\StoreProductRequest;
 
 class ProductController extends Controller
 {
 
-<<<<<<< Updated upstream
-=======
     use ProductTrait,UploadImageTrait;
     
     public function __construct(
@@ -20,7 +21,6 @@ class ProductController extends Controller
         )
     {}
 
->>>>>>> Stashed changes
     public function index()
     {
 
@@ -28,14 +28,10 @@ class ProductController extends Controller
 
     public function create()
     {
-<<<<<<< Updated upstream
-        return view('product.create');
-=======
         $attributes = $this->attribute::with('values')->get();       
         
         return view('products.create', compact('attributes'));
 
->>>>>>> Stashed changes
     }
 
     public function store(StoreProductRequest $request)

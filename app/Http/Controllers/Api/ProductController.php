@@ -6,34 +6,23 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Service\VariantService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\GetVariationPriceRequest;
 
 class ProductController extends Controller
 {
 
-    // Hardcoded token for testing this can be env variable 
-    private $hardcodedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTYzMzY0ODQwMH0.XYZ...';
+  
 
     public function __construct(private readonly VariantService $variantService)
     {}
 
-    public function getVariationPrice(Request $request)
+    public function getVariationPrice(GetVariationPriceRequest $request)
     {
+        // The request is already validated and authorized at this point
 
-        // Check for Authorization header with Bearer token
-         $authorizationHeader = $request->header('Authorization');
+        // Get validated data
+        $validated = $request->validated();
 
-        if (!$authorizationHeader || $authorizationHeader !== 'Bearer ' . $this->hardcodedToken) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-
-        // Validate the incoming request
-        $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'attribute_ids' => 'required|array',
-            'attribute_ids.*' => 'integer|exists:attributes,id',
-        ]);
-        
         // Call the service to get the variant
         $variant = $this->variantService->getVariationPrice(
             $validated['product_id'], 
@@ -48,6 +37,6 @@ class ProductController extends Controller
         return response()->json([
             'variant_id' => $variant->id,
             'price' => $variant->price,
-        ],200);
+        ], 200);
     }
 }
