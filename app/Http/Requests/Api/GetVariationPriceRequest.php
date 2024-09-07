@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetVariationPriceRequest extends FormRequest
 {
-    // Hardcoded token for testing this can be env variable 
+    // Hardcoded token for testing this can be env variable
     private $hardcodedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTYzMzY0ODQwMH0.XYZ...';
-    
-    
+
+
       /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,21 +29,21 @@ class GetVariationPriceRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer|exists:products,id',
+            //'product_id' => 'required|integer|exists:products,id',
             'attribute_ids' => 'required|array',
             'attribute_ids.*' => 'integer|exists:attributes,id',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'product_id.required' => 'Product ID is required.',
+            //'product_id.required' => 'Product ID is required.',
             'attribute_ids.required' => 'At least one attribute ID is required.',
             'attribute_ids.*.integer' => 'Each attribute ID must be an integer.',
         ];

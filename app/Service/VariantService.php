@@ -12,24 +12,14 @@ class VariantService
      *
      * @param int $productId
      * @param array $attributeIds
-     * @return Variant|null
      */
-    public function getVariationPrice(int $productId, array $attributeIds): ?Variant
+    public function getVariationPrice(array $attributeIds)
     {
-        // Find the product
-        $product = Product::find($productId);
 
-        if (!$product) {
-            return null;
-        }
 
-        // Query the variant that matches all the selected attributes
-        $variant = Variant::where('product_id', $product->id)
-            ->whereHas('attributeValues', function ($query) use ($attributeIds) {
-                $query->whereIn('attribute_id', $attributeIds);
-            }, '=', count($attributeIds))
-            ->first();
-
-        return $variant;
+        return Variant::whereHas('attributeValues', function ($query) use ($attributeIds) {
+            $query->whereIn('attribute_value_id', $attributeIds);
+        }, '=', count($attributeIds)) // Ensure that the count of matched attributes equals the provided attributes
+        ->first();
     }
 }

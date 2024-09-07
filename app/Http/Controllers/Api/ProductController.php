@@ -11,7 +11,7 @@ use App\Http\Requests\Api\GetVariationPriceRequest;
 class ProductController extends Controller
 {
 
-  
+
 
     public function __construct(private readonly VariantService $variantService)
     {}
@@ -25,7 +25,6 @@ class ProductController extends Controller
 
         // Call the service to get the variant
         $variant = $this->variantService->getVariationPrice(
-            $validated['product_id'], 
             $validated['attribute_ids']
         );
 

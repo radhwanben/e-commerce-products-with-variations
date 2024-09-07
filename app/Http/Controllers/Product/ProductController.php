@@ -2,17 +2,28 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Http\Requests\Product\StoreProductRequest;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Models\Attribute;
 use App\Http\Traits\ProductTrait;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\UploadImageTrait;
-use App\Http\Requests\StoreProductRequest;
 
 class ProductController extends Controller
 {
+
+    use ProductTrait, UploadImageTrait;
+
+    public function __construct(
+        private  readonly Product $product,
+        private  readonly Attribute $attribute,
+        private readonly Variant $variant
+    )
+    {
+    }
 
     public function index()
     {
@@ -32,7 +43,7 @@ class ProductController extends Controller
 
     }
 
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
         //dd($request);
         $imagePath = $this->handleImageUpload($request);
