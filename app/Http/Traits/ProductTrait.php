@@ -54,7 +54,7 @@ trait ProductTrait
             }
         }
     }
-    protected function syncVariantAttributes($variant, $attributes)
+    protected function syncVariantAttributes($variant, $attributes): void
     {
         if (isset($attributes) && is_array($attributes)) {
             $filteredAttributes = array_filter($attributes, function($value) {

@@ -45,14 +45,13 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        //dd($request);
         $imagePath = $this->handleImageUpload($request);
 
         $product = $this->createProduct($request, $imagePath);
 
-        $this->syncProductAttributes($product, $request->attributes);
+        $this->syncProductAttributes($product, $request->get('attributes'));
 
-        $this->createProductVariants($product, $request->variants);
+        $this->createProductVariants($product,$request->get('variants'));
 
         return redirect()->back()->with('success', 'Product created successfully.');
     }
