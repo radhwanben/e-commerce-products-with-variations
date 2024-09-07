@@ -11,7 +11,7 @@ use App\Http\Requests\StoreProductRequest;
 
 trait ProductTrait
 {
-   
+
 
     protected function createProduct($request, $imagePath)
     {
@@ -30,7 +30,7 @@ trait ProductTrait
             $filteredAttributes = array_filter($attributes, function($value) {
                 return !empty($value) && is_numeric($value);
             });
-            
+
             if (!empty($filteredAttributes)) {
                 $product->attributes()->sync($filteredAttributes);
             }
@@ -41,7 +41,7 @@ trait ProductTrait
     {
         if (isset($variants) && is_array($variants)) {
             foreach ($variants as $variantData) {
-                $variant = Variant::create([
+                $variant = $this->variant::create([
                     'product_id' => $product->id,
                     'price' => $variantData['price'],
                     'stock' => $variantData['stock'],
@@ -60,7 +60,7 @@ trait ProductTrait
             $filteredAttributes = array_filter($attributes, function($value) {
                 return !empty($value) && is_numeric($value);
             });
-            
+
             if (!empty($filteredAttributes)) {
                 $variant->attributeValues()->sync($filteredAttributes);
             }
