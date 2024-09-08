@@ -2,17 +2,12 @@
 
 namespace App\Http\Traits;
 
-use App\Models\Product;
-use App\Models\Variant;
+
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductRequest;
 
-
-
 trait ProductTrait
 {
-
-
     protected function createProduct($request, $imagePath)
     {
         return $this->product::create([
@@ -23,12 +18,12 @@ trait ProductTrait
         ]);
     }
 
-
     protected function syncProductAttributes($product, $attributes)
     {
         if (isset($attributes) && is_array($attributes)) {
+            // Ensure that only numeric attribute IDs are included
             $filteredAttributes = array_filter($attributes, function($value) {
-                return !empty($value) && is_numeric($value);
+                return is_numeric($value);
             });
 
             if (!empty($filteredAttributes)) {
@@ -41,24 +36,30 @@ trait ProductTrait
     {
         if (isset($variants) && is_array($variants)) {
             foreach ($variants as $variantData) {
-                $variant = $this->variant::create([
-                    'product_id' => $product->id,
-                    'price' => $variantData['price'],
-                    'stock' => $variantData['stock'],
-                ]);
-                if(isset($variantData['attributes']))
-                {
-                    $this->syncVariantAttributes($variant, $variantData['attributes']);
-                }
-
+                $this->createProductVariant($product, $variantData['price'], $variantData['stock'], $variantData['attributes']);
             }
         }
     }
+
+    protected function createProductVariant($product, $price, $stock, $attributes)
+    {
+        $variant = $this->variant::create([
+            'product_id' => $product->id,
+            'price' => $price,
+            'stock' => $stock,
+        ]);
+
+        if (isset($attributes) && is_array($attributes)) {
+            $this->syncVariantAttributes($variant, $attributes);
+        }
+    }
+
     protected function syncVariantAttributes($variant, $attributes): void
     {
         if (isset($attributes) && is_array($attributes)) {
-            $filteredAttributes = array_filter($attributes, function($value) {
-                return !empty($value) && is_numeric($value);
+            // Ensure that only numeric attribute values are included
+            $filteredAttributes = array_filter(array_keys($attributes), function($value) {
+                return is_numeric($value);
             });
 
             if (!empty($filteredAttributes)) {

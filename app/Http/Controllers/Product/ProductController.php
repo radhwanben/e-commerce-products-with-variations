@@ -49,13 +49,19 @@ class ProductController extends Controller
 
         $product = $this->createProduct($request, $imagePath);
 
-        $this->syncProductAttributes($product, $request->get('attributes'));
+        $attributes = [];
+        foreach ($request->get('variants') as $attribute) {
+            $attributes = array_keys($attribute['attributes']);
+        }
 
-        $this->createProductVariants($product,$request->get('variants'));
+        $this->syncProductAttributes($product, $attributes);
+
+        $variants = $request->input('variants', []);
+
+        $this->createProductVariants($product, $variants);
 
         return redirect()->back()->with('success', 'Product created successfully.');
     }
-
 
 
 }
